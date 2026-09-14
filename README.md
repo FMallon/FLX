@@ -31,7 +31,7 @@ cd to the directory where you want to install the repo:
 ```
 git clone https://github.com/FMallon/FLX;
 [[ ! -x ./FLX/Main/flx.sh ]] && chmod +x ./FLX/Main/flx.sh;
-sudo ln -sf ./FLX/Main/flx.sh /usr/local/bin/flx;
+sudo ln -sf "$(pwd)/FLX/Main/flx.sh" /usr/local/bin/flx;
 flx --generate-default-config;
 ```
 
