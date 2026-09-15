@@ -1,5 +1,6 @@
 <div align="center">
-FLX
+    
+<h1>FLX</h1>
 
 A lightweight App Launcher and Local Bin, configured and managed in Lua for launching AppImages, Scripts, Commands through User-Defined Aliases for Bash and Zsh.
 </div>
@@ -62,6 +63,7 @@ flx -- flx
 ```
 
 And bash -x's output should show everything going on under the hood to the terminal.
+
 ----
 
 If we run:
@@ -70,7 +72,7 @@ If we run:
 flx -da
 ```
 
-We should see a list of all the Application entries in out Config outputted to the terminal.
+We should see a list of all the Application entries in our Config outputted to the terminal.
 
 "hello" should be one of these.  This will simply print "hello" to the terminal.
 
@@ -271,35 +273,61 @@ The reason for this default being set the way it is: it's the best way I know to
 
 ## Return Codes
 
-Return 1  - Error: Unsupported environment                                                                            
+Return 1  - Error: Unsupported environment      
+
 Return 2  - Error: Unmet dependency
+
 Return 3  - Error: Invalid arg
+
 Return 4  - Error: Invalid no. of args                                 
+
 Return 5  - Config file does not exist
+
 Return 6  - Invalid config file format
+
 Return 7  - Application name not found
+
 Return 8  - Invalid query
+
 Return 9  - Error: Sourcing required external Scripts
+
 Return 10 - Error: Finding Lua_Query script
+
 Return 11 - Error: Lua Config doesn't exist
-Return 12 - Error: Failure to pass validate_lua() check - there is an error in the config file
+
+Return 12 - Error: Failure to pass validate_lua() check - there is an error in the config 
+file
+
 Return 13 - Error: Empty app name passed to get_app_data()
+
 Return 14 - Error: The arg passed to validate_is_executable() is empty
+
 Return 15 - Error: The target/wrapper, if a file, is not executable
+
 Return 16 - Error: The target/wrapper is not a valid executable path/command
+
 Return 17 - Error: User-defined editor is invalid, resorting to defaults
+
 Return 18 - Error: No supported editor found on User's System
+
 Return 19 - Error: Failed running the editor to edit the Config File
+
 Return 20 - Error: Failure to create Config Directory
+
 Return 21 - Error: Failure to Generate Default Config
+
 
 ---
 
 ## TODO: 
 
 Clean up Readme, re-formulate etc. and better explanations.
+
 Test the install
+
 Test the guide
+
 Make a nice Return block
+
 Explain Issues, or figure a way to fix them - maybe the latter is better option?
 
