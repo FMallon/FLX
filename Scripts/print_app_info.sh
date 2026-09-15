@@ -128,21 +128,26 @@ print_app_info_zsh(){
     # Format normal arguments
     # -------------------------------------------------------------------------
 
-    for i in {1..${#args}}; do
-        \printf -v value '"%s"' "${args[i]}"
 
-        if (( i > 1 )); then
-            formatted_args+=", "
-        fi
+    if (( ${#args[@]} > 0 )); then
 
-        formatted_args+="${value}"
-    done
+        for i in {1..${#args}}; do
+            \printf -v value '"%s"' "${args[i]}"
+
+            if (( i > 1 )); then
+                formatted_args+=", "
+            fi
+
+            formatted_args+="${value}"
+        done
+    fi
 
     # -------------------------------------------------------------------------
     # Format wrapper arguments
     # -------------------------------------------------------------------------
 
-    if [[ -n "${wrapper:-}" ]]; then
+    if [[ -n "${wrapper:-}" ]] && (( ${#wrapper_args[@]} > 0 )); then
+        
         for i in {1..${#wrapper_args}}; do
             \printf -v value '"%s"' "${wrapper_args[i]}"
 
@@ -214,4 +219,4 @@ print_app_info_zsh(){
 
     \printf '╰%s╯\n\n' "${line}"
 
-}   
+}    
