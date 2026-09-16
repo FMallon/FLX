@@ -26,9 +26,9 @@ A lightweight App Launcher and Local Bin, configured and managed in Lua for laun
 
 FLX is a lightweight application launcher and local bin that uses a Lua configuration file to define user-created aliases for launching applications, scripts and commands.
 
-FLX can also be used as a convenient testing environment for scripts and applications. Instead of repeatedly creating symlinks in directories contained in `$PATH`, creating shell aliases, or modifying and re-sourcing shell configuration files, applications can be added to the FLX configuration and launched immediately using their assigned alias.
+FLX can also be used as a convenient testing environment for scripts and applications.  Instead of repeatedly creating symlinks in directories contained in `$PATH`, creating shell aliases, or modifying and re-sourcing shell configuration files, applications can be added to the FLX configuration and launched immediately using their assigned alias.
 
-The project was originally created as a simple way to test and launch AppImages before committing them to a permanent location. It has since evolved into a more general-purpose launcher and local bin.
+The project was originally created as a simple way to test and launch AppImages before committing them to a permanent location.  It has since evolved into a more general-purpose launcher and local bin.
 
 The configuration is written in Lua, allowing users to define applications and their arguments using a simple and flexible configuration format.
 
@@ -59,10 +59,10 @@ FLX requires:
 
 Now that FLX is installed, and the Default Config has been generated, you will have two entries set in your Config:
 
-1) Runs flx -d flx via bash -x.  This was how I used FLX to test itself during testing....
+1) Runs flx -d flx via bash -x. This was how I used FLX to test itself during testing....
 2) Runs echo hello.
 
-So to verify our entry exists, we can display it's info to the terminal using 
+So to verify our entry exists, we can display its info to the terminal using 
 ```
 flx -d flx
 ```
@@ -151,7 +151,7 @@ apps = {
 
 #### `target`
 
-Must be a valid executable path or command. FLX validates the target at runtime and exits if it is not valid.
+Must be a valid executable path or command.  FLX validates the target at runtime and exits if it is not valid.
 
 This is the default and required variable, and must always be set by the User.
 
@@ -159,7 +159,7 @@ This is the default and required variable, and must always be set by the User.
 
 Defines the arguments passed to the `target` executable at runtime.
 
-This is optional and can be left empty when the User wishes to provide different arguments at different points in time. Runtime arguments can be passed directly when launching an application through FLX; this is expanded upon below.
+This is optional and can be left empty when the User wishes to provide different arguments at different points in time.  Runtime arguments can be passed directly when launching an application through FLX; this is expanded upon below.
 
 #### `background`
 
@@ -169,13 +169,13 @@ This defines whether the application is launched as a separate background proces
 
 #### `wrapper`
 
-One of FLX's purposes is to function as a local bin. When testing or debugging a script, for example, a User may wish to launch it using a wrapper such as `bash -x` or `source`.
+One of FLX's purposes is to function as a local bin.  When testing or debugging a script, for example, a User may wish to launch it using a wrapper such as `bash -x` or `source`.
 
 The `wrapper` entry provides a convenient way to do this without having to modify the `target` and `args` variables.
 
 Like `target`, the wrapper is validated to ensure that it is a valid executable path or command.
 
-**Note:** `source` is a special case. A script being sourced does not need to have its executable permission set because it is being interpreted by the current shell rather than executed directly. However, because FLX validates `target` and `wrapper` as executable paths or commands, `source` should be used as the `target` when sourcing a script, rather than relying on the script itself being executable.
+**Note:** `source` is a special case.  A script being sourced does not need to have its executable permission set because it is being interpreted by the current shell rather than executed directly.  However, because FLX validates `target` and `wrapper` as executable paths or commands, `source` should be used as the `target` when sourcing a script, rather than relying on the script itself being executable.
 
 ----
 
@@ -226,7 +226,7 @@ local editors=(
   )
 ```
 
-in the edit_config() function within the Program. 
+in the edit_config() function within the Program.  
 
 The editor = {} block takes two args, the editor name, and the editor's args that the User wishes to pass:
 
@@ -308,11 +308,11 @@ When `background = true` is specified, FLX attempts to detach the application fr
 
 FLX attempts the following methods in order:
 
-1. `setsid`
-2. `nohup`
-3. A subshell fallback
+1.  `setsid`
+2.  `nohup`
+3.  A subshell fallback
 
-The purpose of this is to prevent the launched application from remaining unnecessarily attached to the terminal or pseudo-terminal from which FLX was invoked. This allows the application to continue running after the launching terminal is closed, where supported by the application and operating system.
+The purpose of this is to prevent the launched application from remaining unnecessarily attached to the terminal or pseudo-terminal from which FLX was invoked.  This allows the application to continue running after the launching terminal is closed, where supported by the application and operating system.
 
 ---
 ## Known Issues
@@ -321,7 +321,7 @@ The purpose of this is to prevent the launched application from remaining unnece
 
 If a function in the Lua Config enters a state where it does not return — for example, due to an invalid value being passed to a File I/O function — the validation process can hang while Lua attempts to execute the function.
 
-I am currently investigating a way to safely terminate validation after a defined timeout. Possible approaches include `timeout`/`gtimeout` or using Perl's `alarm` functionality. The main challenge is handling the timeout while still maintaining control over the command's output and exit status.
+I am currently investigating a way to safely terminate validation after a defined timeout.  Possible approaches include `timeout`/`gtimeout` or using Perl's `alarm` functionality.  The main challenge is handling the timeout while still maintaining control over the command's output and exit status.
 
 I am intentionally trying to avoid unnecessarily complicated solutions such as monitoring CPU usage or attempting to determine whether Lua is actively processing.
 
@@ -335,9 +335,9 @@ The Lua Query script prevents `print()` from being used within the Lua Config be
 
 However, Lua provides other debugging functionality that can also write to `stdout` and potentially interfere with this data.
 
-For example, my FLX config uses `debug.getinfo()` internally to obtain information about the Config file, including functionality used to determine the number of lines in the Config. This is useful for features such as opening the Config at a specific line, so disabling the entire `debug` library is not desirable.
+For example, my FLX config uses `debug.getinfo()` internally to obtain information about the Config file, including functionality used to determine the number of lines in the Config.  This is useful for features such as opening the Config at a specific line, so disabling the entire `debug` library is not desirable.
 
-**Workaround:** Do not write debugging or other informational output to `stdout` from within the Lua Config. Any output intended for debugging should be avoided while the Config is being processed by FLX.
+**Workaround:** Do not write debugging or other informational output to `stdout` from within the Lua Config.  Any output intended for debugging should be avoided while the Config is being processed by FLX.
 
 ---
 
