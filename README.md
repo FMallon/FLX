@@ -5,12 +5,22 @@
 A lightweight App Launcher and Local Bin, configured and managed in Lua for launching AppImages, Scripts, Commands through User-Defined Aliases for Bash and Zsh.
 </div>
 
----
-## Note
-
-This is in the testing stages.  It's functional, but still... it's public so I can test it on other systems.
 
 ---
+
+## Table of Contents
+
+- [Description](#description)
+- [Installation](#install)
+- [Requirements](#requirements)
+- [Quick Guide](#quick-guide)
+- [Lua Config](#lua-config)
+  - [Config Variables](#config-variables)
+  - [Editor](#editor)
+  - [Additional Lua Config Possibilities](#additional-lua-config-possibilities)
+- [Running Apps in the Background](#running-apps-in-the-background)
+- [Known Issues](#known-issues)
+- [Return Codes](#return-codes)
 
 ## Description
 
@@ -24,7 +34,6 @@ The configuration is written in Lua, allowing users to define applications and t
 
 ---
 
-
 ## Install
 
 cd to the directory where you want to install the repo:
@@ -35,10 +44,14 @@ git clone https://github.com/FMallon/FLX;
 sudo ln -sf "$(pwd)/FLX/Main/flx.sh" /usr/local/bin/flx;
 flx --generate-default-config;
 ```
+---
 
-### Note:
+## Requirements
 
-FLX is configured with Zsh compatibility, however, due to the fact that there is no Shebang, usually it will run in Bash 3.2 on MacOS - and I am sure Shell on other systems where Bash doesn't exist.  This is due to Zsh apparently being hardcoded to run files without a Shebang with Shell as the default entrypoint.  Therefore, in order to make it fully Zsh native, you will either have to manually add the Shebang "#!/usr/bin/env zsh" at the top of the ./Main/flx.sh file; or create an alias in your ~/.zshrc file: alias flx='zsh /usr/local/bin/flx'.
+FLX requires:
+
+- Bash or Zsh
+- Lua
 
 ---
 
@@ -49,7 +62,6 @@ Now that FLX is installed, and the Default Config has been generated, you will h
 1) Runs flx -d flx via bash -x.  This was how I used FLX to test itself during testing....
 2) Runs echo hello.
 
-----
 So to verify our entry exists, we can display it's info to the terminal using 
 ```
 flx -d flx
@@ -64,7 +76,6 @@ flx -- flx
 
 And bash -x's output should show everything going on under the hood to the terminal.
 
-----
 
 If we run:
 
@@ -92,9 +103,15 @@ flx -- hello $(whoami)
 ```
 These will be counted as args towards the echo command, not towards FLX.
 
-Therefore any return codes after this point are handled by your script or application - a warning will tell you of this in the CLI.
+So the usage is: flx -- \<alias\> \<args\>
 
+This allows dynamic runtime-usage of scripts/programs during testing where a User needs to dynamically pass args at run-time.
 
+A User can run Python scripts, or Commands, or quickly append an Shell interperetor by adding "zsh" as a "wrapper" entry during testing.
+
+Any return codes after the point of FLX passing validation and Alias handling are handled by your script or application - a warning will tell you of this in the CLI.
+
+---
 
 ## Lua Config
 
@@ -128,28 +145,52 @@ apps = {
 }
 
 ```
+---
 
 ### Config Variables
 
-#### target:
-Must be a valid executable path, or a command.  FLX validates these properties at runtime and exits if not variable.  It is the default variable and must always be set by the User.
+#### `target`
 
-#### args: 
-These will be the arguments of the target executable to be launched at runtime.  This is optional, and can be left empty in cases where a User wishes to launch something with different args at different points in time - this will be expanded upon below.
+Must be a valid executable path or command. FLX validates the target at runtime and exits if it is not valid.
 
-#### background:
-By default, this will always be false, unless true is specified by the User.  This defines whether or not the App is to be ran as a seperate background process, or a foreground process whose lifespan will depend on the TTY that launched it.
+This is the default and required variable, and must always be set by the User.
 
-#### wrapper:
-One of FLX's purposes is to be used as a local bin; in the event of testing a script, one may wish to use "bash -x" or "source" to launch their script/program.  This entry gives the user a quick entry-point to achieve this without rewriting the target/args variables to achieve this.  Like target, this will go through validation to make sure it's an executable path/command
+#### `args`
 
-Note: this is for this specific use-case, but be aware, if using source, a script won't need to be executable, however, if using FLX to source a script, it is advised to always use source as the target, as target validation requires executable functionality.  #(explain this a little better) 
+Defines the arguments passed to the `target` executable at runtime.
 
-#### wrapper_args:
-This will be the args of the wrapper entry, so if using "bash -x" to do some basic shell checks, 
+This is optional and can be left empty when the User wishes to provide different arguments at different points in time. Runtime arguments can be passed directly when launching an application through FLX; this is expanded upon below.
 
+#### `background`
+
+By default, `background` is set to `false` unless explicitly set to `true` by the User.
+
+This defines whether the application is launched as a separate background process or as a foreground process whose lifetime is tied to the process that launched it.
+
+#### `wrapper`
+
+One of FLX's purposes is to function as a local bin. When testing or debugging a script, for example, a User may wish to launch it using a wrapper such as `bash -x` or `source`.
+
+The `wrapper` entry provides a convenient way to do this without having to modify the `target` and `args` variables.
+
+Like `target`, the wrapper is validated to ensure that it is a valid executable path or command.
+
+**Note:** `source` is a special case. A script being sourced does not need to have its executable permission set because it is being interpreted by the current shell rather than executed directly. However, because FLX validates `target` and `wrapper` as executable paths or commands, `source` should be used as the `target` when sourcing a script, rather than relying on the script itself being executable.
+
+----
+
+For example:
+
+```lua
+target = "source"
+args = {
+    "/path/to/script.sh",
+}
 ```
 
+Should a User wish to add a bash -x check quickly:
+
+```lua
 target = "path/to/script.sh",
 
 args = {"--help"},
@@ -157,7 +198,6 @@ args = {"--help"},
 wrapper = "bash",
 
 wrapper_args = {"-x"}
-
 ```
 Then the flow will be:
 
@@ -166,19 +206,16 @@ bash -x path/to/script.sh --help
 ```
 Now the script's usage function should run via bash -x.
 
-----
+---
 
-### Additional Lua Config Possibilities
+### Editor
 
-
-----
-
-Another hidden entry in the Lua config is editor = {}.
+Another possible entry in the Lua config is editor = {}.
 
 This allows the User to configure a desired text-editor of choice for the --edit flag.
 
-Note: if the config file is invalid, the editor name is unexecutable/invlalid, or the editor = {} block is unset, the editor will default to 
-
+**Note:** if the config file is invalid, the editor name is unexecutable/invalid, or the editor = {} block is unset, the editor will default to 
+```bash
 local editors=(
     "nano"
     "nvim"
@@ -187,6 +224,7 @@ local editors=(
     "vim"
     "vi"
   )
+```
 
 in the edit_config() function within the Program. 
 
@@ -209,8 +247,9 @@ This ensures that when I run 'flx -e' to edit the Config, it will open it at the
 
 A User may also use Lua functionality to get the lines of the Config file, and use that to open the Config at its last line - more about extra Lua functionality will be expanded upon below.
 
-----
+---
 
+### Additional Lua Config Possibilities
 
 Because Lua is a programming language in-and-of-itself, and not just a text-based format for parsing, it is possible for a User to create their own variables for use within the Config.
 
@@ -225,7 +264,7 @@ vars = {
 
 ```
 
-Using os.getenv("HOME"), we can get the environment variable for our home directory.  The '..' appends to the string a '/' so our full path is now "/home/user/".  You don't have to do that here exactly, and can account for that elsewhere.
+Using os.getenv("HOME"), we can get the environment variable for our home directory.  The '..' appends '/' to the string so our full path is now "/home/user/".  You don't have to do that here exactly, and can account for that elsewhere.
 
 In Apps we can use this to avoid writing out full directory paths all the time: 
 
@@ -257,77 +296,77 @@ apps = {
 
 ```
 
+**Note:** Variables used from another Lua Table must be set above.  If vars = {} is defined under apps = {}, app = {} will not be able to see this variable.
+
 ---
 
 ## Running Apps in the Background
 
-By the default, FLX entries will be run in the foreground unless explicitly called in their options: background = "true".
+FLX runs applications in the foreground by default.
 
-In the event where a User wishes to launch a FLX entry in the background, I configured the program to go by 2 methods, plus the default.
+When `background = true` is specified, FLX attempts to detach the application from the terminal that launched it.
 
-First, setsid will be attempted; if this fails, nohup will then be attempted; if this fails, then it will default to a subshell.
+FLX attempts the following methods in order:
 
-The reason for this default being set the way it is: it's the best way I know to detach from a Pseudo-Terminal.  I don't know if it's the best way to do it, but if I don't do it this way, an App will always be attached to the PTS that the FLX entry was launched from - therefore, if a User is to close the PTS, the App will also shutdown... which is not ideal.  But usually a linux system will have setsid, and Unix systems will have nohup.   
+1. `setsid`
+2. `nohup`
+3. A subshell fallback
+
+The purpose of this is to prevent the launched application from remaining unnecessarily attached to the terminal or pseudo-terminal from which FLX was invoked. This allows the application to continue running after the launching terminal is closed, where supported by the application and operating system.
+
+---
+## Known Issues
+
+### Hang During Validation (`-vc`)
+
+If a function in the Lua Config enters a state where it does not return — for example, due to an invalid value being passed to a File I/O function — the validation process can hang while Lua attempts to execute the function.
+
+I am currently investigating a way to safely terminate validation after a defined timeout. Possible approaches include `timeout`/`gtimeout` or using Perl's `alarm` functionality. The main challenge is handling the timeout while still maintaining control over the command's output and exit status.
+
+I am intentionally trying to avoid unnecessarily complicated solutions such as monitoring CPU usage or attempting to determine whether Lua is actively processing.
+
+**Workaround:** Press `Ctrl+C` twice to terminate the validation process, then edit the Config to fix or remove the function causing the hang.
+
+---
+
+### Lua Debugging Output
+
+The Lua Query script prevents `print()` from being used within the Lua Config because output written to `stdout` can interfere with the data FLX expects to receive from the Lua Query script.
+
+However, Lua provides other debugging functionality that can also write to `stdout` and potentially interfere with this data.
+
+For example, my FLX config uses `debug.getinfo()` internally to obtain information about the Config file, including functionality used to determine the number of lines in the Config. This is useful for features such as opening the Config at a specific line, so disabling the entire `debug` library is not desirable.
+
+**Workaround:** Do not write debugging or other informational output to `stdout` from within the Lua Config. Any output intended for debugging should be avoided while the Config is being processed by FLX.
 
 ---
 
 ## Return Codes
 
-Return 1  - Error: Unsupported environment      
-
-Return 2  - Error: Unmet dependency
-
-Return 3  - Error: Invalid arg
-
-Return 4  - Error: Invalid no. of args                                 
-
-Return 5  - Config file does not exist
-
-Return 6  - Invalid config file format
-
-Return 7  - Application name not found
-
-Return 8  - Invalid query
-
-Return 9  - Error: Sourcing required external Scripts
-
-Return 10 - Error: Finding Lua_Query script
-
-Return 11 - Error: Lua Config doesn't exist
-
-Return 12 - Error: Failure to pass validate_lua() check - there is an error in the config 
-file
-
-Return 13 - Error: Empty app name passed to get_app_data()
-
-Return 14 - Error: The arg passed to validate_is_executable() is empty
-
-Return 15 - Error: The target/wrapper, if a file, is not executable
-
-Return 16 - Error: The target/wrapper is not a valid executable path/command
-
-Return 17 - Error: User-defined editor is invalid, resorting to defaults
-
-Return 18 - Error: No supported editor found on User's System
-
-Return 19 - Error: Failed running the editor to edit the Config File
-
-Return 20 - Error: Failure to create Config Directory
-
-Return 21 - Error: Failure to Generate Default Config
-
+| Code | Description |
+|---:|---|
+| `1` | Error: Unsupported environment |
+| `2` | Error: Unmet dependency |
+| `3` | Error: Invalid argument |
+| `4` | Error: Invalid number of arguments |
+| `5` | Config file does not exist |
+| `6` | Invalid config file format |
+| `7` | Application name not found |
+| `8` | Invalid query |
+| `9` | Error: Sourcing required external scripts |
+| `10` | Error: Finding Lua Query script |
+| `11` | Error: Lua Config does not exist |
+| `12` | Error: Failure to pass `validate_lua()` check — there is an error in the config file |
+| `13` | Error: Empty app name passed to `get_app_data()` |
+| `14` | Error: The argument passed to `validate_is_executable()` is empty |
+| `15` | Error: The target/wrapper, if a file, is not executable |
+| `16` | Error: The target/wrapper is not a valid executable path/command |
+| `17` | Error: User-defined editor is invalid, resorting to defaults |
+| `18` | Error: No supported editor found on user's system |
+| `19` | Error: Failed running the editor to edit the Config File |
+| `20` | Error: Failure to create Config Directory |
+| `21` | Error: Failure to Generate Default Config |
 
 ---
 
-## TODO: 
-
-Clean up Readme, re-formulate etc. and better explanations.
-
-Test the install
-
-Test the guide
-
-Make a nice Return block
-
-Explain Issues, or figure a way to fix them - maybe the latter is better option?
 
