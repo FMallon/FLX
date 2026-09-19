@@ -7,8 +7,7 @@
 #
 #   [Dependencies]
 #       Lua
-#       Bash 3.2
-#       Zsh
+#       Bash 3.2 or Zsh
 #
 #                                                                                                                       #
 #                                                                                                    [AUTHOR] F. Mallon #
@@ -218,6 +217,22 @@ flx_main(){
       edit_config || return $?
 
     ;;
+
+      -ed | --edit-default)
+
+      shift
+
+      if (( $# > 0 )); then
+
+        \printf "\n[ERROR] Invalid no. of args!\n\n"
+        return 4
+
+      fi
+
+      edit_config_default || return $?
+
+    ;;
+
 
     -h | --help)
 
