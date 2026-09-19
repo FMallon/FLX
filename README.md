@@ -20,6 +20,7 @@ A lightweight App Launcher and Local Bin, configured and managed in Lua for laun
   - [Additional Lua Config Possibilities](#additional-lua-config-possibilities)
 - [Running Apps in the Background](#running-apps-in-the-background)
 - [Known Issues](#known-issues)
+- [Usage](#usage)
 - [Return Codes](#return-codes)
 
 ## Description
@@ -338,6 +339,57 @@ However, Lua provides other debugging functionality that can also write to `stdo
 For example, my FLX config uses `debug.getinfo()` internally to obtain information about the Config file, including functionality used to determine the number of lines in the Config.  This is useful for features such as opening the Config at a specific line, so disabling the entire `debug` library is not desirable.
 
 **Workaround:** Do not write debugging or other informational output to `stdout` from within the Lua Config.  Any output intended for debugging should be avoided while the Config is being processed by FLX.
+
+---
+
+## Usage
+
+```text
+FLX — App Launcher & Local Bin
+──────────────────────────────────────────────────────────────────────────────
+
+Usage:
+  flx <arg>
+  flx <arg> <app_name>
+  flx <arg> <app_name> <extra_args...>
+
+
+General Options:
+
+  -h, --help                         Show usage
+
+
+Config Options:
+
+  --generate-default-config         Generate a default config
+  -vc, --validate-config             Validate the Lua config
+  -e, --edit                         Edit the config file
+  -ed, --edit-defaults               Edit the config using the default editor
+
+
+Display Options:
+
+  -da, --display-all-apps            Display all apps in the Lua config
+                                     with their information
+  -d, --display-app <app_name>       Display information for the specified app
+
+
+Execution:
+
+  -- <app_name> <optional_extra_args>
+                                     Run the specified program, command,
+                                     script or app
+
+
+Debug Options:
+
+  --debug <app_name> <optional_extra_args>
+                                     Print the arguments in array format
+                                     for debugging
+
+──────────────────────────────────────────────────────────────────────────────
+
+```
 
 ---
 
