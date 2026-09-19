@@ -1,6 +1,6 @@
 usage() {
 
-    \printf "\nFLX is a lightweight App Launcher & Local Bin written in Lua to run Scripts, Programs and Apps. Functional in both Bash & Zsh.\n\n"
+    \printf "\nFLX - App Launcher & Local Bin\n\n"
 
     \printf "Usage:\n\n"
     \printf "  flx <arg>\n"
@@ -14,6 +14,8 @@ usage() {
     \printf "  %-40s %s\n" "--generate-default-config" "Generate a default config"
     \printf "  %-40s %s\n" "-vc, --validate-config" "Validate the Lua config"
     \printf "  %-40s %s\n" "-e, --edit" "Edit the config file"
+    \printf "  %-40s %s\n" "-ed, --edit-defaults" "Edit the config file with default editor - in the event where the User's editor choice won't launch due to a switch from Graphical Environment to a TTY"
+
 
     \printf "\nDisplay Options:\n\n"
     \printf "  %-40s %s\n" "-da, --display-all-apps" "Display all apps in the Lua config with their info"
