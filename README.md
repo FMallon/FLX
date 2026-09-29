@@ -23,6 +23,8 @@ A lightweight App Launcher and Local Bin, configured and managed in Lua for laun
 - [Usage](#usage)
 - [Return Codes](#return-codes)
 
+---
+
 ## Description
 
 FLX is a lightweight application launcher and local bin that uses a Lua configuration file to define user-created aliases for launching applications, scripts and commands.
